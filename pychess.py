@@ -29,7 +29,7 @@ def getMaia(fen):
     return response
 
 
-def getStockfish(fen):
+def getBestMove(fen):
     # Returns the best move, depth + score
     STOCKFISH_PORT = 8002
     SERVER = f"http://127.0.0.1:{STOCKFISH_PORT}"
@@ -90,7 +90,7 @@ def getComplexity(maiaEval):
     return complexity_1100, complexity_1900
 
 
-def getEval(fen, moves):
+def getStockfish(fen, moves):
     # Given a fen and a move, uses stockfish determine whether it is a sound move
     STOCKFISH_PORT = 8002
     SERVER = f"http://127.0.0.1:{STOCKFISH_PORT}"
@@ -104,21 +104,36 @@ def getEval(fen, moves):
     response = requests.post(SERVER + ROUTE, json=PARAMS)
     return response.json()
 
+def combine_probabilities_and_analysis(maiaEvalMoves, stockfishEval):
+    # Combines the move probabilities from Maia and the soundness from Stockfish
+    # Returns a dictionary with the move and the combined probability
+    combined = {}
+    for move in maiaEvalMoves:
+        # Merge the two dictionaries
+        combined[move] = {
+            "probability": maiaEvalMoves[move],
+            "win_rate": stockfishEval[move]["win_rate"]
+        }
+    return combined
 
-fen = "1k4rr/ppq2p2/2p1pn2/5p1p/8/1NP1P1PP/PPQ2P2/1K1RR3 b - - 0 1"
+fen = "rn1qkbnr/ppp2ppp/3p4/8/3PPpb1/5N2/PPP3PP/RNBQKB1R w KQkq - 1 5"
 maiaEval = getMaia(fen)
-stockfishEval = getStockfish(fen)
 nnueEval = getNNUE(fen)
 blunderEval = getBlunder(fen)
 complexity_1100, complexity_1900 = getComplexity(maiaEval)
+stockfishEval = getStockfish(fen, maiaEval["maia-1100"]["moves"])
+ 
+combined = combine_probabilities_and_analysis(maiaEval["maia-1100"]["moves"], stockfishEval["analysis"])
 
 moves = maiaEval["maia-1100"]["moves"]
 
-evaluation = getEval(fen, moves)
+best_move = getBestMove(fen)
 
 print(maiaEval)
 print(stockfishEval)
 print(nnueEval)
 print(blunderEval)
-print(evaluation)
+print(best_move)
 print(f"Complexity: {complexity_1100}")
+print(f"Complexity: {complexity_1900}")
+print(combined)

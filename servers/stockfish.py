@@ -11,6 +11,8 @@ stockfish = Popen(
     ['stockfish'], stdin=PIPE, stdout=PIPE, universal_newlines=True)
 
 DEPTH = 14
+
+
 @app.route("/getAnalysis", methods=['GET'])
 def get_analysis():
     # Get FEN from request parameters
@@ -40,7 +42,6 @@ def get_analysis():
                 # If there is no score, it is mate
                 best_score = 1e6
 
-
             depth_match = re.search(r'depth (\d+)', line)
             if depth_match:
                 depth = int(depth_match.group(1))
@@ -54,7 +55,7 @@ def evaluate_position():
     fen = request.json['fen']
     moves = request.json['moves']
 
-    analysis = []
+    analysis = {}
 
     for move in moves:
 
@@ -86,9 +87,8 @@ def evaluate_position():
                 if depth_match:
                     depth = int(depth_match.group(1))
 
-        analysis.append(
-            {'score': best_score*-1, 'move': move, 'depth': depth, 'win_rate': cp_to_win_rate(best_score*-1)
-             })
+        analysis[move] = {'score': best_score*-1, 'depth': depth,
+                          'win_rate': cp_to_win_rate(best_score*-1)}
         # Return the score and best move
     return jsonify({'analysis': analysis})
 
@@ -179,8 +179,10 @@ def get_eval():
                     'nnue_piece_values': piece_values,
                     'final_eval': final_eval})
 
+
 def cp_to_win_rate(cp):
     return 1 / (1 + math.pow(10, -cp / 400))
+
 
 @register
 def cleanup(): stockfish.kill()
