@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Snabbdom Start</title>
+    <script type="application/javascript" src="https://cdn.jsdelivr.net/npm/vosk-browser@0.0.5/dist/vosk.js"></script>
+    <script src="../dist/bundle.js" defer></script>
+    <link rel="stylesheet" href="./assets/chessground.base.css" />
+    <link rel="stylesheet" href="./assets/chessground.brown.css" />
+    <link rel="stylesheet" href="./assets/chessground.cburnett.css" />
+    <style>
+      #chessground {
+        width: 500px;
+        height: 500px;
+      }
+
+      cg-board {
+        background-color: #bfcfdd;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chessground"></div>
+    <button id="start"></button>
+    <button id="stop"></button>
+    <button id="send"></button>
+    <div id="download"></div>
+  </body>
+</html>
