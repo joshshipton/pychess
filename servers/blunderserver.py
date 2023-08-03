@@ -2,7 +2,7 @@
 
 import torch
 from flask import Flask, request, jsonify
-from subprocess import Popen, PIPE
+from subprocess import Popen, PI
 from atexit import register
 from haibrid_chess_utils import fen_to_vec
 

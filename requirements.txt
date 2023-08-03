@@ -1,0 +1,9 @@
+torch
+flask
+requests
+python-dotenv
+matplotlib
+scipy
+openai
+whisper
+librosa
